@@ -23,6 +23,11 @@ struct ContentView: View {
                 ScrollView(.horizontal) {
                     HStack {
                         Button {
+                            coordinator.play(URL(string: "smb://socian:tzmm.987@sql.nas.wang/Public/Aria2/downloads/ME.mp4")!)
+                        } label: {
+                            Text("smb").frame(width: 130, height: 100)
+                        }
+                        Button {
                             coordinator.play(URL(string: "https://vjs.zencdn.net/v/oceans.mp4")!)
                         } label: {
                             Text("h264").frame(width: 130, height: 100)

@@ -1,11 +1,9 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release tag name (default mpv version)'
-        default: ''
+  push:
+    branches:
+      - main
 
 jobs:
   build:
