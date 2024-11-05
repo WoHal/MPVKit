@@ -17,6 +17,9 @@ do {
     try BuildHarfbuzz().buildALL()
     try BuildASS().buildALL()
 
+    // libsmb2
+    try BuildLibsmb2().buildALL()
+
     // libsmbclient
     try BuildSmbclient().buildALL()
 
@@ -45,10 +48,13 @@ do {
 
 enum Library: String, CaseIterable {
     case libmpv, FFmpeg, libshaderc, vulkan, lcms2, libdovi, openssl, libunibreak, libfreetype, libfribidi, libharfbuzz, libass, libsmbclient, libplacebo, libdav1d, gmp, nettle, gnutls, libuchardet, libbluray, libluajit, libuavs3d
+        ,libsmb2
     var version: String {
         switch self {
         case .libmpv:
             return "v0.39.0"
+        case .libsmb2:
+            return "v5.0.3"
         case .FFmpeg:
             return "n7.1"
         case .openssl:
@@ -96,6 +102,8 @@ enum Library: String, CaseIterable {
 
     var url: String {
         switch self {
+        case .libsmb2:
+            return "https://github.com/WoHal/libsmb2-build/releases/download/\(self.version)/libsmb2-all.zip"
         case .libmpv:
             return "https://github.com/mpv-player/mpv"
         case .FFmpeg:
@@ -150,40 +158,48 @@ enum Library: String, CaseIterable {
             return [
                 .target(
                     name: "Libmpv",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libmpv.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libmpv.xcframework.zip",
                     checksum: ""
+                ),
+            ]
+        case .libsmb2:
+            return [
+                .target(
+                    name: "Libsmb2",
+                    url: "https://github.com/WoHal/libsmb2-build/releases/download/\(self.version)/Libsmb2.xcframework.zip",
+                    checksum: "https://github.com/WoHal/libsmb2-build/releases/download/\(self.version)/Libsmb2.xcframework.checksum.txt"
                 ),
             ]
         case .FFmpeg:
             return  [
                 .target(
                     name: "Libavcodec",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavcodec.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavcodec.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
                     name: "Libavdevice",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavdevice.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavdevice.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
                     name: "Libavformat",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavformat.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavformat.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
                     name: "Libavfilter",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavfilter.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavfilter.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
                     name: "Libavutil",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavutil.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libavutil.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
                     name: "Libswresample",
-                    url: "https://github.com/mpvkit/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libswresample.xcframework.zip",
+                    url: "https://github.com/WoHal/MPVKit/releases/download/\(BaseBuild.options.releaseVersion)/Libswresample.xcframework.zip",
                     checksum: ""
                 ),
                 .target(
@@ -376,7 +392,7 @@ private class BuildMPV: BaseBuild {
         if BaseBuild.options.enableGPL {
             return [.gmp, .libsmbclient]
         } else {
-            return [.gmp]
+            return [.gmp, .libsmb2]
         }
     }
 
@@ -470,7 +486,7 @@ private class BuildFFMPEG: BaseBuild {
         if BaseBuild.options.enableGPL {
             return [.gmp, .nettle, .gnutls, .libsmbclient]
         } else {
-            return [.gmp, .nettle, .gnutls]
+            return [.libsmb2, .gmp, .nettle, .gnutls]
         }
     }
 
@@ -615,6 +631,7 @@ private class BuildFFMPEG: BaseBuild {
                 arguments.append("--enable-\(library.rawValue)")
                 if library == .libsmbclient {
                     arguments.append("--enable-protocol=\(library.rawValue)")
+                    arguments.append("--disable-protocol=libsmb2")
                 } else if library == .libdav1d || library == .libuavs3d {
                     arguments.append("--enable-decoder=\(library.rawValue)")
                 } else if library == .libass {
@@ -840,6 +857,12 @@ private class BuildSmbclient: ZipBaseBuild {
         super.init(library: .libsmbclient)
     }
 
+}
+
+private class BuildLibsmb2: ZipBaseBuild {
+    init() {
+        super.init(library: .libsmb2)
+    }
 }
 
 private class BuildDav1d: ZipBaseBuild {

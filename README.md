@@ -10,7 +10,8 @@
 
 It includes scripts to build `mpv` native libraries.
 
-Forked from [kingslay/FFmpegKit](https://github.com/kingslay/FFmpegKit)
+## About libsmb2 Support in FFmepg
+libsmb2 support only a patch for FFmpeg.
 
 ## About Metal support
 
@@ -67,6 +68,7 @@ make help
 * [libsmbclient-build](https://github.com/mpvkit/libsmbclient-build)
 * [gnutls-build](https://github.com/mpvkit/gnutls-build)
 * [openssl-build](https://github.com/mpvkit/openssl-build)
+* [libsmb2-build](https://github.com/WoHal/libsmb2-build.git)
 
 ## Donation
 
